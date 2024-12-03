@@ -83,6 +83,20 @@ namespace UniversityProject.API.Controllers
             var result = await mediator.Send(data, cancellation);
             return Ok(result);
         }
-
+        
+        [HttpGet("{id}")]
+        [SwaggerOperation(Summary = "Eventni olish", Description = "Eventni olish uchun id param sifatida jo'nating.")]
+        [ProducesResponseType(typeof(Event), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetEventById(int id, CancellationToken cancellation)
+        {
+            var data = new GetEventByIdCommand
+            {
+                EventId = id
+            };
+            
+            var result = await mediator.Send(data, cancellation);
+            return Ok(result);
+        }
     }
 }

@@ -87,5 +87,26 @@ namespace UniversityProject.API.Controllers
             var result = await mediator.Send(data, cancellation);
             return Ok(result);
         }
+        
+        /// <summary>
+        /// Kategoriyani id orqali olish
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="cancellation"></param>
+        /// <returns></returns>
+        [HttpGet("category/{id}")]
+        [SwaggerOperation(Summary = "Kategoriyani olish", Description = "Kategoriyani olish uchun id param sifatida jo'nating.")]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetCategoryById(int id, CancellationToken cancellation)
+        {
+            var data = new GetCategoryByIdCommand
+            {
+                CategoryId = id
+            };
+            
+            var result = await mediator.Send(data, cancellation);
+            return Ok(result);
+        }
     }
 }

@@ -12,17 +12,9 @@ using UniversityProject.Infrastructure.Persistance;
 
 namespace UniversityProject.Application.UseCases.Authorses.Handlers
 {
-    public class CreateAuthorCommandHandler : IRequestHandler<CreateAuthorCommands, Author>
+    public class CreateAuthorCommandHandler(DataContext context, IWebHostEnvironment env)
+        : IRequestHandler<CreateAuthorCommands, Author>
     {
-        private readonly DataContext _context;
-        private readonly IWebHostEnvironment _env;
-
-        public CreateAuthorCommandHandler(DataContext context, IWebHostEnvironment env)
-        {
-            _context = context;
-            _env = env;
-        }
-
         public async Task<Author> Handle(CreateAuthorCommands request, CancellationToken cancellationToken)
         {
             // Muallif ma'lumotlarini yaratish
@@ -40,7 +32,7 @@ namespace UniversityProject.Application.UseCases.Authorses.Handlers
             if (request.Picture != null)
             {
                 // WebRootPath ni tekshirish
-                if (string.IsNullOrEmpty(_env.WebRootPath))
+                if (string.IsNullOrEmpty(env.WebRootPath))
                 {
                     // wwwroot katalogi yo'q bo'lsa, uni yaratish
                     var rootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
@@ -48,7 +40,7 @@ namespace UniversityProject.Application.UseCases.Authorses.Handlers
                     {
                         Directory.CreateDirectory(rootPath);
                     }
-                    _env.WebRootPath = rootPath; // Yangi yaratilgan yo'lni o'rnatish
+                    env.WebRootPath = rootPath; // Yangi yaratilgan yo'lni o'rnatish
                 }
 
                 var files = request.Picture;
@@ -66,7 +58,7 @@ namespace UniversityProject.Application.UseCases.Authorses.Handlers
                 }
 
                 // Fayl yo'lini yaratish
-                var path = Path.Combine(_env.WebRootPath, "AuthorImage");
+                var path = Path.Combine(env.WebRootPath, "AuthorImage");
                 if (!Directory.Exists(path))
                 {
                     Directory.CreateDirectory(path);
@@ -86,8 +78,8 @@ namespace UniversityProject.Application.UseCases.Authorses.Handlers
             }
 
             // Ma'lumotlar bazasiga saqlash
-            await _context.Authors.AddAsync(data);
-            await _context.SaveChangesAsync();
+            await context.Authors.AddAsync(data);
+            await context.SaveChangesAsync();
 
             return data;
         }

@@ -123,8 +123,26 @@ namespace UniversityProject.API.Controllers
             (Summary = "Viloyatlar bo'yicha foydalanuvchilarni olish.",
             Description = "Viloyatlar bo'yicha foydalanuvchilarni olish uchun viloyat id'sini yuboring.")
         ]
-        [ProducesResponseType(typeof(string),StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Country),StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string),StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetAllPersonCountries(CancellationToken cancellation) 
             => Ok(await _mediatr.Send(new GetAllCountryPersonCommand(), cancellation));
+        
+        
+        /// <summary>
+        /// Mamlakatni olish uchun endpoint
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="cancellation"></param>
+        /// <returns></returns>
+        [HttpGet("{id}")]
+        [SwaggerOperation
+            (Summary = "Mamlakatni olish",
+            Description = "Mamlakatni olish uchun ID ni yuboring.")
+        ]
+        [ProducesResponseType(typeof(Country),StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string),StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetCountry(int id, CancellationToken cancellation) 
+            => Ok(await _mediatr.Send(new GetCountryByIdCommand { CountryId = id }, cancellation));
     }
 }

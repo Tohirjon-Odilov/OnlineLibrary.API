@@ -93,5 +93,49 @@ namespace UniversityProject.API.Controllers
             var result = await mediator.Send(data, cancellation);
             return Ok(result);
         }
+        
+        /// <summary>
+        /// Kitobni olish
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="cancellation"></param>
+        /// <returns></returns>
+        [HttpGet("{id}")]
+        [SwaggerOperation
+            (Summary = "Kitobni olish",
+            Description = "Kitobni olish uchun id param sifatida jo'nating.")
+        ]
+        [ProducesResponseType(typeof(Book), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string),StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetBookById([FromRoute]int id, CancellationToken cancellation)
+        {
+            var data = new GetBookByIdCommand
+            {
+                BookId = id
+            };
+            
+            var result = await mediator.Send(data, cancellation);
+            return Ok(result);
+        }
+        
+        [HttpGet("random")]
+        [SwaggerOperation
+            (Summary = "Randomli kitobni olish",
+            Description = "Randomli kitobni olish uchun hech nima talab qilinmaydi.")
+        ]
+        [ProducesResponseType(typeof(List<Book>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string),StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetBookRandom(CancellationToken cancellation)
+        {
+            var data = new GetBooksRandomCommand();
+            var result = await mediator.Send(data, cancellation);
+            return Ok(result.Select(a => new
+            {
+                a.Id,
+                a.Name,
+                a.Description,
+                a.PictureUrl
+            }));
+        }
     }
 }
