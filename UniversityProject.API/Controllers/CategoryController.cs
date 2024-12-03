@@ -54,17 +54,18 @@ namespace UniversityProject.API.Controllers
         /// <summary>
         /// Kategoriya o'chirish
         /// </summary>
-        /// <param name="categoryId"></param>
+        /// <param name="id"></param>
         /// <param name="cancellation"></param>
         /// <returns>O'chirilgan data qaytadi</returns>
-        [HttpDelete("category/{categoryId}")]
+        [HttpDelete("category/{id}")]
+        [SwaggerOperation(Summary = "Kategoriyani o'chirish", Description = "Kategoriya o'chirish uchun id param sifatida jo'nating.")]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> DeleteCategory(int categoryId, CancellationToken cancellation)
+        public async Task<IActionResult> DeleteCategory(int id, CancellationToken cancellation)
         {
             var data = new DeleteCategoryCommand
             {
-                CategoryId = (categoryId)
+                CategoryId = (id)
             };
             
             var result = await mediator.Send(data, cancellation);
@@ -76,8 +77,8 @@ namespace UniversityProject.API.Controllers
         /// </summary>
         /// <param name="cancellation"></param>
         /// <returns></returns>
-        [HttpGet]
-        [SwaggerOperation(Summary = "Kategoriya olish", Description = "Kategoriya olish uchun hech nima talab qilinmaydi.")]
+        [HttpGet("categories")]
+        [SwaggerOperation(Summary = "Kategoriyalarni olish", Description = "Kategoriyalarni olish uchun hech nima talab qilinmaydi.")]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetALlCategory(CancellationToken cancellation)

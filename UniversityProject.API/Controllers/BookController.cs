@@ -55,20 +55,20 @@ namespace UniversityProject.API.Controllers
         /// <summary>
         /// Kitobni o'chirish
         /// </summary>
-        /// <param name="bookId">Kitob ID</param>
+        /// <param name="id">Kitob ID</param>
         /// <param name="cancellation"></param>
-        [HttpDelete("{bookId}")]
+        [HttpDelete("{id}")]
         [SwaggerOperation
             (Summary = "Kitobni o'chirish",
             Description = "Kitobni o'chirish uchun id param sifatida jo'nating.")
         ]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string),StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> DeleteBook([FromRoute]int bookId, CancellationToken cancellation)
+        public async Task<IActionResult> DeleteBook([FromRoute]int id, CancellationToken cancellation)
         {
             var data = new DeleteBookCommand
             {
-                BookId = bookId
+                BookId = id
             };
             
             var result = await mediator.Send(data, cancellation);
