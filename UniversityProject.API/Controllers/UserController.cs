@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using UniversityProject.Application.UseCases.UserBook.Commands;
 using UniversityProject.Application.UseCases.Users.Commands;
 using UniversityProject.Application.UseCases.Users.Queries;
 
@@ -32,6 +33,24 @@ public class UserController(IMediator mediator) : ControllerBase
     [ProducesResponseType(typeof(string),StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CreateUser
         ([FromForm]CreateUserCommands command, CancellationToken cancellation)
+    {
+        return Ok(await mediator.Send(command, cancellation));
+    }
+    
+    /// <summary>
+    /// Foydalanuvchiga kitob qo'shish
+    /// </summary>
+    /// <param name="command"></param>
+    /// <param name="cancellation"></param>
+    /// <returns></returns>
+    [HttpPost("user/add-book")]
+    [SwaggerOperation(
+        Summary = "Foydalanuvchiga kitob qo'shish",
+        Description = "Foydalanuvchiga kitob qo'shish uchun foydalanuvchi ID va kitob ID'sini yuboring.")]
+    [ProducesResponseType(typeof(string),StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(string),StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> AddBookToUser
+        ([FromForm]AddBookUserCommand command, CancellationToken cancellation)
     {
         return Ok(await mediator.Send(command, cancellation));
     }

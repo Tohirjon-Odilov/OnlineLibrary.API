@@ -26,6 +26,7 @@ namespace UniversityProject.Domain.Entities
         
         [JsonIgnore]
         public virtual Category? Category { get; set; }
+        [JsonIgnore]
         public virtual List<UserBook>? BookUsers { get; set; } 
     }
 

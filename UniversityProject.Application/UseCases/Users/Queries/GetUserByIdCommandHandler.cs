@@ -1,17 +1,20 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using UniversityProject.Application.UseCases.Users.Commands;
+using UniversityProject.Domain.Entities;
 using UniversityProject.Domain.Entities.DTOs;
 using UniversityProject.Infrastructure.Persistance;
 
 namespace UniversityProject.Application.UseCases.Users.Queries
 {
     public class GetUserByIdCommandHandler(DataContext context)
-        : IRequestHandler<GetUserByIdCommand, UserDTO>
+        : IRequestHandler<GetUserByIdCommand, UserDto>
     {
-        public Task<UserDTO> Handle(GetUserByIdCommand request, CancellationToken cancellationToken)
+        public Task<UserDto> Handle(GetUserByIdCommand request, CancellationToken cancellationToken)
         {
             var user = context.Users
+                .Include(u => u.UserBooks)!
+                .ThenInclude(ub => ub.Book)
                 .Include(a => a.Report)
                 .Include(a => a.Country)
                 .FirstOrDefault(a=> a.Id == request.Id);
@@ -19,19 +22,42 @@ namespace UniversityProject.Application.UseCases.Users.Queries
             if (user == null)
                 throw new Exception("Not found!");
 
-            var newData = new UserDTO
+            if (user.UserBooks != null)
             {
-                Id = user.Id,
-                FullName = user.FullName,
-                PhoneNumber = user.PhoneNumber,
-                PictureUrl = user.PictureUrl,
-                Email = user.Email,
-                CreatedAt = user.CreatedAt,
-                Report = user.Report,
-                Country = user.Country,
-            };
+                List<BookDto> books =
+                    user.UserBooks.Select(ub => new BookDto
+                    {
+                        Name = ub.Book!.Name,
+                        PictureUrl = ub.Book.PictureUrl,
+                        Id = ub.Book.Id,
+                        AuthorName = ub.Book.Author.FullName,
+                        CategoryName = ub.Book.Category.Name,
+                        CreatedAt = ub.Book.CreatedAt,
+                        Description = ub.Book.Description,
+                        Type = ub.Book.Type,
+                        Count = ub.Book.Count,
+                        Length = ub.Book.Length,
+                        Year = ub.Book.Year,
+                        UpdatedAt = ub.Book.UpdatedAt
+                    }).ToList();
 
-            return Task.FromResult(newData);
+                var newData = new UserDto
+                {
+                    Id = user.Id,
+                    FullName = user.FullName,
+                    PhoneNumber = user.PhoneNumber,
+                    PictureUrl = user.PictureUrl,
+                    Email = user.Email,
+                    CreatedAt = user.CreatedAt,
+                    Report = user.Report,
+                    CountryName = user.Country.Name,
+                    UserBooks = books
+                };
+
+                return Task.FromResult(newData);
+            }
+
+            return Task.FromResult(new UserDto());
         }
     }
 }

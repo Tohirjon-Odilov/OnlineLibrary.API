@@ -4,7 +4,7 @@ using UniversityProject.Domain.Entities.DTOs;
 
 namespace UniversityProject.Application.UseCases.Users.Commands;
 
-public class GetUserByIdCommand : IRequest<UserDTO>
+public class GetUserByIdCommand : IRequest<UserDto>
 {
     public int Id { get; set; }
 }
