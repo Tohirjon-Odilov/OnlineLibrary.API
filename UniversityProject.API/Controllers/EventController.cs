@@ -1,9 +1,6 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using UniversityProject.Application.UseCases.Authorses.Commands;
-using UniversityProject.Application.UseCases.Authorses.Queries;
 using UniversityProject.Application.UseCases.Eventies.Commands;
 using UniversityProject.Application.UseCases.Eventies.Queries;
 using UniversityProject.Domain.Entities;
@@ -12,7 +9,7 @@ namespace UniversityProject.API.Controllers
 {
     [SwaggerTag("Eventlar uchun API")]
     [ApiExplorerSettings(GroupName = "Main")]
-    [Route("api/event")]
+    [Route("api")]
     [ApiController]
     public class EventController(IMediator mediator) : ControllerBase
     {
@@ -22,11 +19,11 @@ namespace UniversityProject.API.Controllers
         /// <param name="command"></param>
         /// <param name="cancellation"></param>
         /// <returns></returns>
-        [HttpPost]
+        [HttpPost("event")]
         [SwaggerOperation(Summary = "Event qo'shish", Description = "Event ma'lumotlarini Form data ko'rinishida yuboring.")]
         [ProducesResponseType(typeof(Event), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> CreateEvent(CreateEventCommand command, CancellationToken cancellation)
+        public async Task<IActionResult> CreateEvent([FromForm] CreateEventCommand command, CancellationToken cancellation)
         {
             var result = await mediator.Send(command, cancellation);
             return Ok(result);
@@ -38,7 +35,7 @@ namespace UniversityProject.API.Controllers
         /// <param name="commad"></param>
         /// <param name="cancellation"></param>
         /// <returns></returns>
-        [HttpPut]
+        [HttpPut("event")]
         [SwaggerOperation(Summary = "Eventni yangilash", Description = "Eventni yangilash uchun form data ko'rinishida yuboring.")]
         [ProducesResponseType(typeof(Event), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -47,13 +44,14 @@ namespace UniversityProject.API.Controllers
             var result = await mediator.Send(commad, cancellation);
             return Ok(result);
         }
+        
         /// <summary>
         /// Eventlarni o'chirish uchun endpoint
         /// </summary>
         /// <param name="id"></param>
         /// <param name="cancellation"></param>
         /// <returns></returns>
-        [HttpDelete("{id}")]
+        [HttpDelete("event/{id}")]
         [SwaggerOperation(Summary = "Eventni o'chirish", Description = "Eventni o'chirish uchun id param sifatida jo'nating.")]
         [ProducesResponseType(typeof(Event), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -73,7 +71,7 @@ namespace UniversityProject.API.Controllers
         /// </summary>
         /// <param name="cancellation"></param>
         /// <returns></returns>
-        [HttpGet]
+        [HttpGet("events")]
         [SwaggerOperation(Summary = "Eventlarni olish", Description = "Eventlarni olish uchun hech nima talab qilinmaydi.")]
         [ProducesResponseType(typeof(List<Event>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -84,7 +82,13 @@ namespace UniversityProject.API.Controllers
             return Ok(result);
         }
         
-        [HttpGet("{id}")]
+        /// <summary>
+        /// Eventni olish
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="cancellation"></param>
+        /// <returns></returns>
+        [HttpGet("event/{id}")]
         [SwaggerOperation(Summary = "Eventni olish", Description = "Eventni olish uchun id param sifatida jo'nating.")]
         [ProducesResponseType(typeof(Event), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]

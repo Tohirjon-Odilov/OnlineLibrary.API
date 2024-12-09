@@ -22,6 +22,7 @@ namespace UniversityProject.Infrastructure.Persistance
         public DbSet<Country> Countries { get; set; }
         public DbSet<Report> Reports { get; set; }
         public DbSet<Event> Events { get; set; }
+        public DbSet<UserBook> UserBooks { get; set; }
         
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -80,7 +81,21 @@ namespace UniversityProject.Infrastructure.Persistance
                 .WithMany()
                 .HasForeignKey(r => r.ApplicationUserId)
                 .OnDelete(DeleteBehavior.SetNull);
+            
+            // UserBook munosabatini aniqlash
+            modelBuilder.Entity<UserBook>()
+                .HasKey(ub => new { ub.ApplicationUserId, ub.BookId }); // Composite Primary Key
 
+            modelBuilder.Entity<UserBook>()
+                .HasOne(ub => ub.User)
+                .WithMany(u => u.UserBooks)
+                .HasForeignKey(ub => ub.ApplicationUserId);
+
+            modelBuilder.Entity<UserBook>()
+                .HasOne(ub => ub.Book)
+                .WithMany(b => b.BookUsers)
+                .HasForeignKey(ub => ub.BookId);
+            
             base.OnModelCreating(modelBuilder); // Asosiy konfiguratsiyani chaqirish
         }
     }

@@ -1,43 +1,27 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UniversityProject.Application.UseCases.Authorses.Commands;
 using UniversityProject.Domain.Entities;
 using UniversityProject.Infrastructure.Persistance;
 
 namespace UniversityProject.Application.UseCases.Authorses.Handlers
 {
-    public class UpdateAuthorCommandHandler : IRequestHandler<UpdateAuthorCommand, Author>
+    public class UpdateAuthorCommandHandler(DataContext context, IWebHostEnvironment env)
+        : IRequestHandler<UpdateAuthorCommand, Author>
     {
-        private readonly DataContext _context;
-        private readonly IWebHostEnvironment _env;
-
-        public UpdateAuthorCommandHandler(DataContext context, IWebHostEnvironment env)
-        {
-            _context = context;
-            _env = env;
-        }
-
         public async Task<Author> Handle(UpdateAuthorCommand request, CancellationToken cancellationToken)
         {
-
-            var email = await _context.Authors.FirstOrDefaultAsync(x => x.Id == request.AuthorId);
-
-
-
+            var email = await context.Authors
+                .FirstOrDefaultAsync(x => x.Id == request.AuthorId, cancellationToken);
+            
             var files = request.Picture;
-            var path = Path.Combine(_env.WebRootPath, "AuthorImage");
+            var path = Path.Combine(env.WebRootPath, "AuthorImage");
             var fileName = "";
 
             if (files != null)
             {
-
-                if (!string.IsNullOrEmpty(email.PictureUrl))
+                if (!string.IsNullOrEmpty(email?.PictureUrl))
                 {
                     var oldFilePath = Path.Combine(path , email.PictureUrl);
                     if(File.Exists(oldFilePath))
@@ -45,26 +29,12 @@ namespace UniversityProject.Application.UseCases.Authorses.Handlers
                         File.Delete(oldFilePath);
                     }
                 }
-
-
-
-                fileName = Guid.NewGuid().ToString() + Path.GetExtension(files.FileName);
-                var filePath = Path.Combine(path, fileName);
-                using(var stream =new FileStream(filePath , FileMode.Create))
-                {
-                    await stream.CopyToAsync(stream);
-                }
-
-
                 
-
-
-
+                fileName = Guid.NewGuid() + Path.GetExtension(files.FileName);
+                var filePath = Path.Combine(path, fileName);
+                await using var stream =new FileStream(filePath , FileMode.Create);
+                await stream.CopyToAsync(stream, cancellationToken);
             }
-
-
-
-
 
             var data = new Author()
             {
@@ -75,19 +45,13 @@ namespace UniversityProject.Application.UseCases.Authorses.Handlers
                 DeletedAt = null,
                 PictureUrl = fileName,
                 CountryId = request.CountryId
-
             };
+            
+            context.Authors.Update(data);
+            await context.SaveChangesAsync(cancellationToken);
 
-
-             _context.Authors.Update(data);
-            await _context.SaveChangesAsync(cancellationToken);
-
-            return email;
-
-
-
-
-
+            if (email != null) return data;
+            return data;
         }
     }
 }

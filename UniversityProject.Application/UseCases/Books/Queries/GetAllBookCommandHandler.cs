@@ -1,23 +1,31 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UniversityProject.Domain.Entities;
+using UniversityProject.Domain.Entities.DTOs;
 using UniversityProject.Infrastructure.Persistance;
 
 namespace UniversityProject.Application.UseCases.Books.Queries
 {
     public class GetAllBookCommandHandler(DataContext context)
-        : IRequestHandler<GetAllBooksCommand, List<Book>>
+        : IRequestHandler<GetAllBooksCommand, PagedResult<Book>>
     {
-        public async Task<List<Book>> Handle(GetAllBooksCommand request, CancellationToken cancellationToken)
+        public async Task<PagedResult<Book>> Handle(GetAllBooksCommand request, CancellationToken cancellationToken)
         {
-            var data = await context.Books
+            var dataCount = await context.Books.CountAsync(cancellationToken);
+            
+            if (dataCount == 0)
+                throw new Exception("Books not found!");
+            
+            var books = await context.Books
+                .Skip((request.Page - 1) * request.Limit)
+                .Take(request.Limit)
                 .ToListAsync(cancellationToken);
-            return data;
+
+            return new PagedResult<Book>
+            {
+                Items = books,
+                TotalCount = dataCount
+            };
         }
     }
 }

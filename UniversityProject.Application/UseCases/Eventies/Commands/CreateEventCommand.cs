@@ -12,9 +12,9 @@ namespace UniversityProject.Application.UseCases.Eventies.Commands
     public class CreateEventCommand : IRequest<Event>
     {
         public string Name { get; set; }
-        public IFormFile Picture { get; set; }
         public string Description { get; set; }
         public DateTime Date { get; set; }
-
+        public IFormFile Picture { get; set; }
+        public int ApplicationUserId { get; set; }
     }
 }

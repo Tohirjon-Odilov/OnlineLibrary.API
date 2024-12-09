@@ -1,25 +1,32 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UniversityProject.Domain.Entities;
+using UniversityProject.Domain.Entities.DTOs;
 using UniversityProject.Infrastructure.Persistance;
 
 namespace UniversityProject.Application.UseCases.Authorses.Queries
 {
     public class GetAllAuthorCommandHandler(DataContext context)
-        : IRequestHandler<GetAllAuthorCommand, List<Author>>
+        : IRequestHandler<GetAllAuthorCommand, PagedResult<Author>>
     {
-        public async Task<List<Author>> Handle(GetAllAuthorCommand request, CancellationToken cancellationToken)
+        public async Task<PagedResult<Author>> Handle(
+            GetAllAuthorCommand request, CancellationToken cancellationToken)
         {
+            var dataCount = await context.Authors.CountAsync(cancellationToken);
+            
+            if (dataCount == 0)
+                throw new Exception("Authors not found!");
+            
             var data = await context.Authors
-                // .Include(a => a.Books)
-                // .Include(a => a.Country)
+                .Skip((request.Page - 1) * request.Limit)
+                .Take(request.Limit)
                 .ToListAsync(cancellationToken);
-            return data;
+            
+            return new PagedResult<Author>
+            {
+                Items = data,
+                TotalCount = dataCount
+            };
         }
     }
 }

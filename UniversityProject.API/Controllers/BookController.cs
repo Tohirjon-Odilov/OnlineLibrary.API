@@ -7,7 +7,7 @@ using UniversityProject.Domain.Entities;
 
 namespace UniversityProject.API.Controllers
 {
-    [Route("api/book")]
+    [Route("api")]
     [Produces("application/json")]
     [ApiExplorerSettings(GroupName = "Main")]
     [SwaggerTag("Kitoblar bilan ishlash uchun API")]
@@ -20,7 +20,7 @@ namespace UniversityProject.API.Controllers
         /// <param name="command"></param>
         /// <param name="cancellation"></param>
         /// <returns></returns>
-        [HttpPost]
+        [HttpPost("book")]
         [SwaggerOperation
             (Summary = "Kitob qo'shish",
             Description = "Yangi kitob ma'lumotlarini form data ko'rinishida yuboring.")
@@ -30,6 +30,7 @@ namespace UniversityProject.API.Controllers
         public async Task<IActionResult> CreateBook([FromForm]CreateBookCommand command, CancellationToken cancellation)
         {
             var result = await mediator.Send(command, cancellation);
+            
             return Ok(result);
         }
 
@@ -39,7 +40,7 @@ namespace UniversityProject.API.Controllers
         /// <param name="commad"></param>
         /// <param name="cancellation"></param>
         /// <returns></returns>
-        [HttpPut]
+        [HttpPut("book")]
         [SwaggerOperation
             (Summary = "Kitobni yangilash", 
             Description = "Kitobni yangilash uchun form data ko'rinishida yuboring.")
@@ -49,6 +50,7 @@ namespace UniversityProject.API.Controllers
         public async Task<IActionResult> UpdateBook([FromForm]UpdateBookCommand commad, CancellationToken cancellation)
         {
             var result = await mediator.Send(commad, cancellation);
+            
             return Ok(result);
         }
 
@@ -57,7 +59,7 @@ namespace UniversityProject.API.Controllers
         /// </summary>
         /// <param name="id">Kitob ID</param>
         /// <param name="cancellation"></param>
-        [HttpDelete("{id}")]
+        [HttpDelete("book/{id}")]
         [SwaggerOperation
             (Summary = "Kitobni o'chirish",
             Description = "Kitobni o'chirish uchun id param sifatida jo'nating.")
@@ -78,19 +80,27 @@ namespace UniversityProject.API.Controllers
         /// <summary>
         /// Barcha kitoblarni olish
         /// </summary>
+        /// <param name="limit"></param>
         /// <param name="cancellation"></param>
-        /// <returns></returns>
-        [HttpGet]
+        /// <param name="page"></param>
+        /// <returns>PagedResult</returns>
+        [HttpGet("books")]
         [SwaggerOperation
             (Summary = "Kitobni olish",
             Description = "Barcha kitoblarni olish uchun hech nima talab qilinmaydi.")
         ]
         [ProducesResponseType(typeof(List<Book>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string),StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetALlBook(CancellationToken cancellation)
+        public async Task<IActionResult> GetALlBook([FromQuery]int page, int limit, CancellationToken cancellation)
         {
-            var data = new GetAllBooksCommand();
+            var data = new GetAllBooksCommand
+            {
+                Limit = limit,
+                Page = page
+            };
+            
             var result = await mediator.Send(data, cancellation);
+            
             return Ok(result);
         }
         
@@ -100,7 +110,7 @@ namespace UniversityProject.API.Controllers
         /// <param name="id"></param>
         /// <param name="cancellation"></param>
         /// <returns></returns>
-        [HttpGet("{id}")]
+        [HttpGet("book/{id}")]
         [SwaggerOperation
             (Summary = "Kitobni olish",
             Description = "Kitobni olish uchun id param sifatida jo'nating.")
@@ -115,10 +125,16 @@ namespace UniversityProject.API.Controllers
             };
             
             var result = await mediator.Send(data, cancellation);
+            
             return Ok(result);
         }
         
-        [HttpGet("random")]
+        /// <summary>
+        /// Randomli kitoblarni olish
+        /// </summary>
+        /// <param name="cancellation"></param>
+        /// <returns></returns>
+        [HttpGet("book/random")]
         [SwaggerOperation
             (Summary = "Randomli kitobni olish",
             Description = "Randomli kitobni olish uchun hech nima talab qilinmaydi.")
@@ -129,6 +145,7 @@ namespace UniversityProject.API.Controllers
         {
             var data = new GetBooksRandomCommand();
             var result = await mediator.Send(data, cancellation);
+            
             return Ok(result.Select(a => new
             {
                 a.Id,

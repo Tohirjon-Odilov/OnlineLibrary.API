@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using UniversityProject.Domain.Entities.Auth;
 
 namespace UniversityProject.Domain.Entities
 {
@@ -25,6 +26,7 @@ namespace UniversityProject.Domain.Entities
         
         [JsonIgnore]
         public virtual Category? Category { get; set; }
+        public virtual List<UserBook>? BookUsers { get; set; } 
     }
 
 }

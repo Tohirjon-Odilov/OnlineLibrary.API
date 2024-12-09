@@ -1,62 +1,54 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UniversityProject.Application.UseCases.Eventies.Commands;
 using UniversityProject.Domain.Entities;
 using UniversityProject.Infrastructure.Persistance;
 
 namespace UniversityProject.Application.UseCases.Eventies.Handlers
 {
-    public class CreateEventCommandHandlers : IRequestHandler<CreateEventCommand, Event>
+    public class CreateEventCommandHandlers(DataContext context, IWebHostEnvironment env)
+        : IRequestHandler<CreateEventCommand, Event>
     {
-        private readonly DataContext _context;
-        private readonly IWebHostEnvironment _env;
-
-        public CreateEventCommandHandlers(DataContext context, IWebHostEnvironment env)
-        {
-            _context = context;
-            _env = env;
-        }
-
         public async Task<Event> Handle(CreateEventCommand request, CancellationToken cancellationToken)
         {
             var files = request.Picture;
-            var path = Path.Combine(_env.WebRootPath, "EventImage");
-            var fileName = "";
+            
+            if (files == null || files.Length == 0)
+                throw new ArgumentException("Rasmni yuklash majburiy.", nameof(request.Picture));
+            
+            var path = Path.Combine(env.WebRootPath, "EventImage");
 
-            fileName = Guid.NewGuid().ToString() + "EventImage" + files.FileName;
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+
+            var fileName = $"{Guid.NewGuid()}_EventImage{Path.GetExtension(files.FileName)}";
             var filePath = Path.Combine(path, fileName);
-            using (var stream = new FileStream(filePath, FileMode.Create))
+            
+            try
             {
-               await files.CopyToAsync(stream);
+                await using var stream = new FileStream(filePath, FileMode.Create);
+                await files.CopyToAsync(stream, cancellationToken);
             }
-
-
-
-            var data = new Event()
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Faylni saqlashda xatolik yuz berdi.", ex);
+            }
+            
+            var data = new Event
             {
                 Name = request.Name,            
                 CreatedAt = DateTime.UtcNow,
+                Date = DateTime.UtcNow,
                 DeletedAt = null,
                 PictureUrl = fileName,
                 Description = request.Description,
-                Date= DateTime.UtcNow
-
+                ApplicationUserId = request.ApplicationUserId
             };
 
-
-            await _context.Events.AddAsync(data);
-            await _context.SaveChangesAsync();
-
-
-
-
+            await context.Events.AddAsync(data, cancellationToken);
+            await context.SaveChangesAsync(cancellationToken);
+            
             return data;
-
         }
     }
 }

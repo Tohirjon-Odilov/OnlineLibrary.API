@@ -22,5 +22,7 @@ namespace UniversityProject.Domain.Entities.Auth
 
         public virtual ICollection<Report> Report { get; set; }
         public virtual Country Country { get; set; }
+        public virtual ICollection<Book> Books { get; set; } = new List<Book>(); // <==>
+        public virtual ICollection<UserBook>? UserBooks { get; set; }
     }
 }

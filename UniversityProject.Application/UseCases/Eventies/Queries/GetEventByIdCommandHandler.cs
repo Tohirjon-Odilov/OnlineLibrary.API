@@ -15,7 +15,9 @@ namespace UniversityProject.Application.UseCases.Eventies.Queries
     {
         public async Task<Event> Handle(GetEventByIdCommand request, CancellationToken cancellationToken)
         {
-           var data = await context.Events.FirstOrDefaultAsync(x => x.Id == request.EventId, cancellationToken);
+           var data = await context.Events
+               .Where(a => a.DeletedAt == null)
+               .FirstOrDefaultAsync(x => x.Id == request.EventId, cancellationToken);
            
             if (data == null)
             {
