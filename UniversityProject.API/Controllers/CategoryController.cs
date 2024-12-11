@@ -16,19 +16,20 @@ namespace UniversityProject.API.Controllers
         /// <summary>
         ///  Kategoriya qo'shish
         /// </summary>
-        /// <param name="categoryName"></param>
+        /// <param name="category"></param>
         /// <param name="cancellation"></param>
         /// <returns></returns>
-        [HttpPost("category/{categoryName}")]
+        [HttpPost("category")]
         [SwaggerOperation(
             Summary = "Kategoriya qo'shish",
             Description = "Kategoriya ma'lumotlarini JSON ko'rinishida yuboring.")
         ]
         [ProducesResponseType(typeof(string), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> CreateCategory(string categoryName, CancellationToken cancellation)
+        public async Task<IActionResult> CreateCategory
+            ([FromForm] CreateCategoryCommand category, CancellationToken cancellation)
         {
-            var result = await mediator.Send(categoryName, cancellation);
+            var result = await mediator.Send(category, cancellation);
             return Ok(result);
         }
 

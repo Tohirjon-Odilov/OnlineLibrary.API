@@ -21,4 +21,8 @@
     <ProjectReference Include="..\UniversityProject.Infrastructure\UniversityProject.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="UseCases\UserBook\Queries\" />
+  </ItemGroup>
+
 </Project>

@@ -1,9 +1,4 @@
 ﻿using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UniversityProject.Application.UseCases.Categories.Commands;
 using UniversityProject.Domain.Entities;
 using UniversityProject.Infrastructure.Persistance;
@@ -17,8 +12,9 @@ namespace UniversityProject.Application.UseCases.Categories.Handlers
         {
             var data = new Category()
             {
-                Name = request.Name,
+                Name = request.Name!,
                 CreatedAt = DateTime.UtcNow,
+                IsInstituteLiterature = request.IsInstituteLecture
             };
             
             await context.Categories.AddAsync(data, cancellationToken);

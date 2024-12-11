@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using UniversityProject.Application.UseCases.Users.Commands;
-using UniversityProject.Domain.Entities;
 using UniversityProject.Domain.Entities.DTOs;
 using UniversityProject.Infrastructure.Persistance;
 
@@ -10,11 +9,15 @@ namespace UniversityProject.Application.UseCases.Users.Queries
     public class GetUserByIdCommandHandler(DataContext context)
         : IRequestHandler<GetUserByIdCommand, UserDto>
     {
-        public Task<UserDto> Handle(GetUserByIdCommand request, CancellationToken cancellationToken)
+        public Task<UserDto> Handle
+            (GetUserByIdCommand request, CancellationToken cancellationToken)
         {
             var user = context.Users
                 .Include(u => u.UserBooks)!
-                .ThenInclude(ub => ub.Book)
+                .ThenInclude(ub => ub.Book).ThenInclude(book => book!.Author)
+                .Include(applicationUser => applicationUser.UserBooks)!
+                .ThenInclude(userBook => userBook.Book)
+                .ThenInclude(book => book!.Category)
                 .Include(a => a.Report)
                 .Include(a => a.Country)
                 .FirstOrDefault(a=> a.Id == request.Id);
@@ -30,8 +33,8 @@ namespace UniversityProject.Application.UseCases.Users.Queries
                         Name = ub.Book!.Name,
                         PictureUrl = ub.Book.PictureUrl,
                         Id = ub.Book.Id,
-                        AuthorName = ub.Book.Author.FullName,
-                        CategoryName = ub.Book.Category.Name,
+                        AuthorName = ub.Book.Author!.FullName,
+                        CategoryName = ub.Book.Category!.Name,
                         CreatedAt = ub.Book.CreatedAt,
                         Description = ub.Book.Description,
                         Type = ub.Book.Type,

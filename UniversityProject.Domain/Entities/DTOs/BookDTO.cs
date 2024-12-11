@@ -14,4 +14,5 @@ public class BookDto
     public int? Count { get; set; }
     public string? CategoryName { get; set; }
     public string? AuthorName { get; set; }
+    public ICollection<int> UserIds { get; set; } = new List<int>();
 }

@@ -10,6 +10,7 @@ namespace UniversityProject.Application.UseCases.Categories.Commands
 {
     public class CreateCategoryCommand : IRequest<Category>
     {
-        public string Name { get; set; }
+        public string? Name { get; set; }
+        public bool IsInstituteLecture { get; set; }
     }
 }
