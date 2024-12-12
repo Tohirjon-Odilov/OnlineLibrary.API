@@ -56,6 +56,24 @@ public class UserController(IMediator mediator) : ControllerBase
     }
     
     /// <summary>
+    /// Foydalanuvchidan kitobni olib tashlash
+    /// </summary>
+    /// <param name="command"></param>
+    /// <param name="cancellation"></param>
+    /// <returns></returns>
+    [HttpPost("user/remove-book")]
+    [SwaggerOperation(
+        Summary = "Foydalanuvchidan kitob o'chirish",
+        Description = "Foydalanuvchidan kitob o'chirish uchun foydalanuvchi ID va kitob ID'sini yuboring.")]
+    [ProducesResponseType(typeof(string),StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(string),StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> RemoveBookFromUser
+        ([FromForm]RemoveBookUserCommand command, CancellationToken cancellation)
+    {
+        return Ok(await mediator.Send(command, cancellation));
+    }
+    
+    /// <summary>
     /// Updates an existing user.
     /// Ushbu endpoint mavjud foydalanuvchi ma'lumotlarini yangilash uchun ishlatiladi.
     /// Foydalanuvchi foydalanuvchi ID'si va yangilangan ma'lumotlarni yuborishi kerak.
