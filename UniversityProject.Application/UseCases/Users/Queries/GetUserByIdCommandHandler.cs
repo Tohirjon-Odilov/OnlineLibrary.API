@@ -65,6 +65,22 @@ namespace UniversityProject.Application.UseCases.Users.Queries
             catch(Exception e)
             {
                 Console.WriteLine(e);
+                List<BookDto> books =
+                    user.UserBooks!.Select(ub => new BookDto
+                    {
+                        Name = ub.Book!.Name,
+                        PictureUrl = ub.Book.PictureUrl,
+                        Id = ub.Book.Id,
+                        AuthorName = ub.Book.Author!.FullName,
+                        CreatedAt = ub.Book.CreatedAt,
+                        Description = ub.Book.Description,
+                        Type = ub.Book.Type,
+                        Count = ub.Book.Count,
+                        Length = ub.Book.Length,
+                        Year = ub.Book.Year,
+                        UpdatedAt = ub.Book.UpdatedAt
+                    }).ToList();
+                
                 var newData = new UserDto
                 {
                     Id = user.Id,
@@ -75,7 +91,7 @@ namespace UniversityProject.Application.UseCases.Users.Queries
                     CreatedAt = user.CreatedAt,
                     Report = user.Report,
                     CountryName = user.Country.Name,
-                    UserBooks = new List<BookDto>()
+                    UserBooks = books
                 };
                 return Task.FromResult(newData);
             }
