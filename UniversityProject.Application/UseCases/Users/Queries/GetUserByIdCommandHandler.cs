@@ -77,6 +77,7 @@ namespace UniversityProject.Application.UseCases.Users.Queries
                     CountryName = user.Country.Name,
                     UserBooks = new List<BookDto>()
                 };
+                return Task.FromResult(newData);
             }
             
             return Task.FromResult(new UserDto());
