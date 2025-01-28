@@ -32,8 +32,9 @@ namespace UniversityProject.API.Controllers
             Description = "Yangi muallif ma'lumotlarini JSON ko'rinishida yuboring."
         )]
         [ProducesResponseType(typeof(string), StatusCodes.Status201Created)]
-        [ProducesResponseType(typeof(string),StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> CreateAuthor([FromForm]CreateAuthorCommands command, CancellationToken cancellation)
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> CreateAuthor([FromForm] CreateAuthorCommands command,
+            CancellationToken cancellation)
         {
             var result = await mediator.Send(command, cancellation);
             return Ok(result);
@@ -55,8 +56,8 @@ namespace UniversityProject.API.Controllers
             Summary = "Muallifni yangilash",
             Description = "Yangi muallif ma'lumotlarini JSON ko'rinishida yuboring."
         )]
-        [ProducesResponseType(typeof(string),StatusCodes.Status201Created)]
-        [ProducesResponseType(typeof(string),StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> UpdateAuthor(UpdateAuthorCommand command, CancellationToken cancellation)
         {
             var result = await mediator.Send(command, cancellation);
@@ -87,7 +88,7 @@ namespace UniversityProject.API.Controllers
             {
                 Id = id
             };
-            
+
             var result = await mediator.Send(data, cancellation);
             return Ok(result);
         }
@@ -96,7 +97,9 @@ namespace UniversityProject.API.Controllers
         /// Retrieves all authors.
         /// Ushbu endpoint barcha mualliflarni olish uchun ishlatiladi.
         /// </summary>
+        /// <param name="limit"></param>
         /// <param name="cancellation">So'rovni bekor qilish uchun token</param>
+        /// <param name="page"></param>
         /// <returns>
         /// Mualliflar ro'yxatini qaytaradi.
         /// Agar mualliflar topilmasa, bo'sh ro'yxat qaytaradi.
@@ -106,13 +109,17 @@ namespace UniversityProject.API.Controllers
             Summary = "Mualliflar ro'yxatini olish",
             Description = "Ushbu endpoint orqali barcha mualliflarning ma'lumotlarini olishingiz mumkin."
         )]
-        public async Task<IActionResult> GetALlAuthor(CancellationToken cancellation)
+        public async Task<IActionResult> GetALlAuthor([FromQuery] int page, int limit, CancellationToken cancellation)
         {
-            var data = new GetAllAuthorCommand();
+            var data = new GetAllAuthorCommand
+            {
+                Limit = limit,
+                Page = page
+            };
             var result = await mediator.Send(data, cancellation);
             return Ok(result);
         }
-        
+
         /// <summary>
         /// Retrieves an author by ID.
         /// Ushbu endpoint muallifni ID orqali olish uchun ishlatiladi.
@@ -137,7 +144,7 @@ namespace UniversityProject.API.Controllers
             {
                 Id = id
             };
-            
+
             var result = await mediator.Send(data, cancellation);
             return Ok(result);
         }
