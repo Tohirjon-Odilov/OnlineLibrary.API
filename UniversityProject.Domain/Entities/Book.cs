@@ -16,6 +16,7 @@ namespace UniversityProject.Domain.Entities
         public DateTime? DeletedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public string PictureUrl { get; set; }
+        public string PdfUrl { get; set; }
         public int? Count { get; set; }
         public int? AuthorId { get; set; }
         public int? CountryId { get; set; }

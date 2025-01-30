@@ -23,6 +23,7 @@ namespace UniversityProject.Application.UseCases.Books.Queries
                 {
                     Name = ub.Name,
                     PictureUrl = ub.PictureUrl,
+                    PdfUrl = ub.PdfUrl,
                     Id = ub.Id,
                     AuthorName = ub.Author!.FullName,
                     CategoryName = ub.Category!.Name,

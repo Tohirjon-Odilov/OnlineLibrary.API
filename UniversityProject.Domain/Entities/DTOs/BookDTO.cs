@@ -11,6 +11,7 @@ public class BookDto
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
     public string? PictureUrl { get; set; }
+    public string? PdfUrl { get; set; }
     public int? Count { get; set; }
     public string? CategoryName { get; set; }
     public string? AuthorName { get; set; }

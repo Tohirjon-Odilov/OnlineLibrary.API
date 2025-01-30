@@ -20,6 +20,7 @@ namespace UniversityProject.Application.UseCases.Books.Commands
         public string Description { get; set; }
         public int Length { get; set; }
         public IFormFile Picture { get; set; }
+        public IFormFile Pdf { get; set; }
         public int Count { get; set; }
     }
 }

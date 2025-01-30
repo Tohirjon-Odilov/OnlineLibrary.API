@@ -12,6 +12,7 @@ namespace UniversityProject.Domain.Entities
         [JsonIgnore]
         public DateTime? DeletedAt { get; set; }
         public int ApplicationUserId { get; set; }
+        [JsonIgnore]
         public virtual ApplicationUser User { get; set; }
     }
 }

@@ -42,6 +42,35 @@ namespace UniversityProject.Application.UseCases.Books.Handlers
             {
                 await files.CopyToAsync(stream, cancellationToken);
             }
+            
+            //
+            var pdfFile = request.Pdf;
+
+            if (pdfFile == null || pdfFile.Length == 0)
+                throw new Exception("No file uploaded.");
+
+            var allowedPdfExtensions = new[] 
+            { 
+                ".pdf"
+            };
+
+            var pdfExtension = Path.GetExtension(pdfFile.FileName).ToLower();
+
+            if (!allowedPdfExtensions.Contains(pdfExtension))
+                throw new Exception("Invalid file type. Allowed type is pdf.");
+
+            var pdfFolder = Path.Combine(env.WebRootPath, "BookFile");
+
+            if (!Directory.Exists(pdfFolder))
+                Directory.CreateDirectory(pdfFolder);
+
+            var pdfName = $"{Guid.NewGuid()}{pdfExtension}";
+            var pdfPath = Path.Combine(pdfFolder, pdfName);
+
+            await using (var stream = new FileStream(pdfPath, FileMode.Create))
+            {
+                await pdfFile.CopyToAsync(stream, cancellationToken);
+            }
 
             var data = new Book
             {
@@ -56,6 +85,7 @@ namespace UniversityProject.Application.UseCases.Books.Handlers
                 Description = request.Description,
                 Length = request.Length,
                 PictureUrl = "BookImage/"+fileName,
+                PdfUrl = "BookFile/"+pdfName,
                 Count = request.Count,
                 Author = null,
                 Country = null

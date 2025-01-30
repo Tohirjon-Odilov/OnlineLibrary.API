@@ -151,7 +151,7 @@ namespace UniversityProject.API.Controllers
                 a.Id,
                 a.Name,
                 a.Description,
-                a.PictureUrl
+                a.PictureUrl,
             }));
         }
     }

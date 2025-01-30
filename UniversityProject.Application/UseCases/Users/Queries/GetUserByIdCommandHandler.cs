@@ -34,6 +34,7 @@ namespace UniversityProject.Application.UseCases.Users.Queries
                         {
                             Name = ub.Book!.Name,
                             PictureUrl = ub.Book.PictureUrl,
+                            PdfUrl = ub.Book.PdfUrl,
                             Id = ub.Book.Id,
                             AuthorName = ub.Book.Author!.FullName,
                             CategoryName = ub.Book.Category!.Name,
@@ -70,6 +71,7 @@ namespace UniversityProject.Application.UseCases.Users.Queries
                     {
                         Name = ub.Book!.Name,
                         PictureUrl = ub.Book.PictureUrl,
+                        PdfUrl = ub.Book.PdfUrl,
                         Id = ub.Book.Id,
                         AuthorName = ub.Book.Author!.FullName,
                         CreatedAt = ub.Book.CreatedAt,
