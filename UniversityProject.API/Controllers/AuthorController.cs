@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using UniversityProject.Application.UseCases.Authorses.Commands;
 using UniversityProject.Application.UseCases.Authorses.Queries;
-using GetAuthorByIdCommand = UniversityProject.Application.UseCases.Authorses.Commands.GetAuthorByIdCommand;
 
 namespace UniversityProject.API.Controllers
 {
@@ -142,7 +141,7 @@ namespace UniversityProject.API.Controllers
         {
             var data = new GetAuthorByIdCommand
             {
-                Id = id
+                AuthorId = id
             };
 
             var result = await mediator.Send(data, cancellation);
